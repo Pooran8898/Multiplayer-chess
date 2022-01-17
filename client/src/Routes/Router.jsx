@@ -1,10 +1,12 @@
 import React from "react";
 import { Routes, Route, Link } from "react-router-dom";
+import { Navbar } from "../Components/Navbar/Navbar";
 
 export const Router = () => {
 
     return (
         <>
+            <Navbar />
             <Routes>
                 <Route path="/" element={<h1>Home</h1>} />
                 <Route path="/game/:gameId" element={<h1>Game</h1>} />
