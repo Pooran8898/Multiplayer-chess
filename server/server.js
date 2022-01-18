@@ -1,7 +1,8 @@
 const express = require("express");
 const http = require("http");
 const socketio = require("socket.io");
-const HTTP_PORT = "4000";
+require("dotenv").config();
+const HTTP_PORT = process.env.PORT || "4000";
 const app = express();
 const server = http.createServer(app);
 const io = socketio(server);
@@ -76,5 +77,5 @@ io.on("connected", (socket) => {
 
 
 app.listen(HTTP_PORT, () => {
-    console.log("Server 4000 is Running");
+    console.log(`Server ${HTTP_PORT} is Running`);
 })
