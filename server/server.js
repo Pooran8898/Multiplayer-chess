@@ -35,7 +35,23 @@ io.on("connected", (socket) => {
         clientNames[gameId].push(room.username);
         console.log(clientNames[gameId]);
     });
-    
+
+    socket.on("move", (state) => {
+        io.in(state.gameId).emit("userMove", state);
+    })
+
+    socket.on("castle", (data) => {
+        io.in(data.gameId).emit("castleBoard", data);
+    })
+
+    socket.on("rematch", (data) => {
+        rematchCounter += data.num;
+        if (rematchCounter === 2) {
+            rematchCounter = 0;
+            io.in(data.gameId).emit("initiateRematch");
+        }
+    })
+
 })
 
 
