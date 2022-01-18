@@ -1,18 +1,20 @@
 import React from "react";
 import { useState } from "react";
 import { v4 as uuid } from "uuid";
+import { socket } from "../socket/socket";
+import { useLocation } from "react-router-dom";
 
 
 export const Datacontext = React.createContext();
 
-let socket = "";
-
 export const DatacontextProvider = ({ children }) => {
+    const pathname = useLocation().pathname.split("/game/");
+    const paramsgameId = pathname[1];
     const [username, Setusername] = useState("");
     const [redirect, setRedirect] = useState(false);
-    const [gameId, setgameId] = useState(uuid());
+    const [gameId, setgameId] = useState(paramsgameId || uuid());
 
-    // Function to Join Lobby
+    
 
     const generateGameId = () => {
         setRedirect(true);
@@ -26,7 +28,7 @@ export const DatacontextProvider = ({ children }) => {
         setRedirect,
         gameId,
         setgameId,
-        generateGameId
+        generateGameId,
     }
     return (
         <>

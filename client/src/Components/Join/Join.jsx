@@ -8,7 +8,8 @@ import Button from "@material-ui/core/Button";
 
 
 export const Join = () => {
-    const { redirect, generateGameId, gameId, Setusername, username } = useContext(Datacontext);
+    const { redirect, gameId, Setusername, username, generateGameId } = useContext(Datacontext);
+
     return (
         <>
             <div>
