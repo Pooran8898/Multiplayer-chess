@@ -3,7 +3,7 @@ import Piece from "./Piece";
 
 export class Queen extends Piece {
     constructor(player) {
-        super(player, player === 1 ? "" : "")
+        super(player, player === 1 ? "https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Chess_qlt45.svg/68px-Chess_qlt45.svg.png" : "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Chess_qdt45.svg/68px-Chess_qdt45.svg.png")
         this.name = "Queen";
         this.hasMoved = false;
     }

@@ -3,7 +3,7 @@ import Piece from "./Piece";
 
 export class Pawn extends Piece {
     constructor(player) {
-        super(player, player === 1 ? "" : "");
+        super(player, player === 1 ? "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chess_plt45.svg/68px-Chess_plt45.svg.png" : "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Chess_pdt45.svg/68px-Chess_pdt45.svg.png");
         this.initialPositions = {
             1: [48, 49, 50, 51, 52, 53, 54, 55],
             2: [8, 9, 10, 11, 12, 13, 14, 15]
