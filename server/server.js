@@ -37,6 +37,18 @@ io.on("connected", (socket) => {
         console.log(clientNames[gameId]);
     });
 
+    socket.on("shouldGameStart", (gameId) => {
+        console.log(numClients[gameId]);
+        if (numClients[gameId] === 2) {
+            io.in(gameId).emit("start game", clientNames[gameId]);
+            io.in(gameId).emit('message', { text: "Welcome to Online Chess!", user: "admin" });
+        }
+
+        if (numClients[gameId] > 2) {
+            console.log("room full :(");
+        }
+    });
+
     socket.on("move", (state) => {
         io.in(state.gameId).emit("userMove", state);
     })
