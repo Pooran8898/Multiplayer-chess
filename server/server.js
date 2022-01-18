@@ -10,12 +10,14 @@ var numClients = {};
 var clientNames = {};
 var rematchCounter = 0;
 
-io.on("connected", (socket) => {
+io.on("connection", (socket) => {
     console.log("A user connected");
 
     socket.on("disconnect", () => {
         console.log("A user disconnected");
-        numClients[socket.room]--;
+        if (numClients[socket.room] !== undefined) {
+            numClients[socket.room]--;
+        }
         console.log(numClients[socket.room]);
     })
 
@@ -88,6 +90,6 @@ io.on("connected", (socket) => {
 })
 
 
-app.listen(HTTP_PORT, () => {
+server.listen(HTTP_PORT, () => {
     console.log(`Server ${HTTP_PORT} is Running`);
 })
