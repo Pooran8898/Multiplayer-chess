@@ -52,9 +52,29 @@ io.on("connected", (socket) => {
         }
     })
 
+    socket.on("clickResign", (data) => {
+        io.in(data.gameId).emit("initiateResign");
+    })
+
+    socket.on("enPassant", (data) => {
+        io.in(data.gameId).emit("handleEnpassant", data);
+    })
+
+    socket.on("sendMessage", (message, gameId, username, callback) => {
+        io.in(gameId).emit('message', { text: message, user: username })
+        callback();
+    });
+
+    socket.on("callUser", (data) => {
+        io.in(data.gameId).emit("hello", { signal: data.signalData, from: data.from })
+    });
+
+    socket.on('acceptCall', (data) => {
+        io.in(data.gameId).emit("callAccepted", data.signal);
+    });
 })
 
 
-app.listen("4000", () => {
+app.listen(HTTP_PORT, () => {
     console.log("Server 4000 is Running");
 })
