@@ -29,13 +29,54 @@ export const Game = () => {
         })
     }, [])
 
+    const isEnemyKinginCheck = (squares) => {
+        return new Promise((resolve, reject) => {
+            let enemyKingIndex = -1;
+            let check = false;
+            let otherPlayer = playerTurn === 1 ? 2 : 1;
+            var path = [];
+            var attackingPiece = -1;
+
+            for (let i = 0; i < squares.length && enemyKingIndex < 0; ++i) {
+                if (squares[i] !== null && squares[i].name === "King" && squares[i].player === otherPlayer) {
+                    enemyKingIndex = i;
+                }
+            }
+
+            var found = false;
+
+            for (let j = 0; j < squares.length && !found; ++j) {
+                if (squares[j] !== null && squares[j].player === playerTurn) {
+                    const validMove = squares[j].isMoveValid(j, enemyKingIndex, true);
+                    path = squares[j].getPathIndicies(j, enemyKingIndex);
+                    if (validMove) {
+                        const validPath = checkValidPath(squares, path);
+                        if (validPath) {
+                            attackingPiece = j;
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found) {
+                check = true;
+
+            }
+            else {
+                check = false;
+            }
+            let enemyCheck = { check, enemyKingIndex, checkmate };
+            resolve(enemyCheck);
+        })
+    }
+
     const isMyKinginCheck = (squares) => {
         return new Promise((resolve, reject) => {
             let kingIndex = -1;
             let check = false;
             let otherPlayer = playerTurn === 1 ? 2 : 1;
 
-            for (let i = 0; i < squares.length && kingIndex > 0; ++i) {
+            for (let i = 0; i < squares.length && kingIndex < 0; ++i) {
                 if (squares[i] !== null && squares[i].name === "King" && squares[i].player === playerTurn) {
                     kingIndex = i
                 }
@@ -255,7 +296,7 @@ export const Game = () => {
                                     setSelectedIndex(-1);
                                 }
                                 else {
-                                    
+
                                 }
                             })
                         }
