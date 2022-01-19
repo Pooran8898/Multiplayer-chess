@@ -7,8 +7,9 @@ import { Datacontext } from "../../Context/Datacontext";
 import { Queen } from "../../Pieces/Queen";
 import { Rook } from "../../Pieces/Rook";
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@material-ui/core";
+import { TextField } from "@material-ui/core";
 import { Chat } from "../Chat/Chat";
-
+import "./Game.css";
 
 
 export const Game = () => {
@@ -613,10 +614,8 @@ export const Game = () => {
                                 <Button onClick={resign} variant="contained" color="primary">
                                     Resign
                                 </Button>
-                                <div>
-                                    <Chat />
-                                </div>
                             </div>
+                            <Chat />
                         </div>
                     </>
                     :
