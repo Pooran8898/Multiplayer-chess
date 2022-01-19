@@ -3,10 +3,11 @@ import Piece from "./Piece";
 
 export class Rook extends Piece {
     constructor(player) {
-        super(player, player === 1 ? "https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/Chess_rlt45.svg/68px-Chess_rlt45.svg.png" : "https://upload.wikimedia.org/wikipedia/commons/thumb/f/ff/Chess_rdt45.svg/68px-Chess_rdt45.svg.png")
+        super(player, player === 1 ? 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg' : 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg');
         this.hasMoved = false;
         this.name = "Rook";
     }
+
     handleMoved() {
         this.hasMoved = true;
     }
@@ -18,6 +19,7 @@ export class Rook extends Piece {
     getName() {
         return this.name;
     }
+
     isMoveValid = (initialPos, endPos) => {
         const mod = initialPos % 8;
         const diff = 8 - mod;

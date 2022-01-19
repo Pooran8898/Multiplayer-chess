@@ -3,54 +3,65 @@ import Piece from "./Piece";
 
 export class Pawn extends Piece {
     constructor(player) {
-        super(player, player === 1 ? "https://upload.wikimedia.org/wikipedia/commons/thumb/4/45/Chess_plt45.svg/68px-Chess_plt45.svg.png" : "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c7/Chess_pdt45.svg/68px-Chess_pdt45.svg.png");
+        super(player, player === 1 ? 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg' : 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg');
         this.initialPositions = {
             1: [48, 49, 50, 51, 52, 53, 54, 55],
             2: [8, 9, 10, 11, 12, 13, 14, 15]
-        };
+        }
+
         this.name = "Pawn";
         this.hasMoved = false;
         this.doubleJump = false;
     }
+
     handleMoved() {
         this.hasMoved = true;
     }
+
     getName = () => {
         return this.name;
     }
-    isMoveValid(initialposition, endingposition, endingpositionocc) {
+
+    isMoveValid(initialPos, endPos, endPosOccupied) {
         if (this.player === 1) {
-            if ((endingposition === initialposition - 8 && !endingpositionocc)) {
-                return true
-            }
-            else if ((endingposition === initialposition - 16 && this.initialPositions[1].indexOf(initialposition) >= 0 && !endingpositionocc)) {
+            if ((endPos === initialPos - 8 && !endPosOccupied)) {
                 return true;
             }
-            else if ((endingposition === initialposition - 7 || endingposition === initialposition - 9) && endingpositionocc) {
+            else if (endPos === initialPos - 16 && this.initialPositions[1].indexOf(initialPos) >= 0 && !endPosOccupied) {
+                this.doubleJump = true;
+                return true;
+            }
+            else if ((endPos === initialPos - 7 || endPos === initialPos - 9) && endPosOccupied) {
                 return true;
             }
         }
+
         else {
-            if ((endingposition === initialposition + 8 && !endingpositionocc)) {
-                return true
-            }
-            else if ((endingposition === initialposition + 16 && this.initialPositions[2].indexOf(initialposition) >= 0)) {
+            if (endPos === initialPos + 8 && !endPosOccupied) {
                 return true;
             }
-            else if ((endingposition === initialposition + 7 || endingposition === initialposition + 9) && endingpositionocc) {
+            else if (endPos === initialPos + 16 && this.initialPositions[2].indexOf(initialPos) >= 0) {
+                this.doubleJump = true;
+                return true;
+            }
+            else if ((endPos === initialPos + 7 || endPos === initialPos + 9) && endPosOccupied) {
                 return true;
             }
         }
     }
-    getPathIndicies(initialposition, endingposition) {
-        let indices = [];
-        if (endingposition - initialposition === 16) {
-            indices.push(initialposition + 8);
+
+    getPathIndicies = (initialPos, endPos) => {
+        var indicies = [];
+
+        if (endPos - initialPos === 16) {
+            indicies.push(initialPos + 8);
         }
-        else if (initialposition - endingposition === 16) {
-            indices.push(initialposition - 8);
+
+        else if (initialPos - endPos === 16) {
+            indicies.push(initialPos - 8);
         }
-        return indices;
+
+        return indicies;
     }
 }
 

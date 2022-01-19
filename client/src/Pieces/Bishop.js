@@ -2,40 +2,53 @@ import Piece from "./Piece";
 
 export class Bishop extends Piece {
     constructor(player) {
-        super(player, player === 1 ? "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b1/Chess_blt45.svg/68px-Chess_blt45.svg.png" : "https://upload.wikimedia.org/wikipedia/commons/thumb/9/98/Chess_bdt45.svg/68px-Chess_bdt45.svg.png")
+        super(player, player === 1 ? 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg' : 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg');
         this.name = "Bishop";
         this.hasMoved = false;
+
     }
+
     handleMoved() {
         this.hasMoved = true;
     }
-    getName() {
-        return this.name
+
+    getName = () => {
+        return this.name;
     }
-    isMoveValid(initialposition, endingposition) {
-        const diff = Math.abs(endingposition - initialposition);
-        return (diff % 9 === 0 || diff % 7 === 0);
+
+    isMoveValid = (initialPos, endPos) => {
+        const diff = Math.abs(endPos - initialPos);
+        return (
+            diff % 9 === 0 ||
+            diff % 7 === 0
+        );
     }
-    getPathIndicies(initialposition, endingposition) {
-        let indices = [];
-        let increment;
-        const diff = Math.abs(endingposition - initialposition);
+
+    getPathIndicies = (initialPos, endPos) => {
+        var indicies = [];
+        var increment;
+        const diff = Math.abs(endPos - initialPos);
+
         if (diff % 9 === 0) {
-            increment = 9;
+            increment = 9
         }
+
         else if (diff % 7 === 0) {
-            increment = 7;
+            increment = 7
         }
-        if (endingposition > initialposition) {
-            for (let i = initialposition + increment; i < endingposition; i += increment) {
-                indices.push(1);
+
+        if (endPos > initialPos) {
+            for (var i = initialPos + increment; i < endPos; i += increment) {
+                indicies.push(i);
             }
         }
+
         else {
-            for (let i = initialposition - increment; i > endingposition; i -= increment) {
-                indices.push(1);
+            for (var i = initialPos - increment; i > endPos; i -= increment) {
+                indicies.push(i);
             }
         }
-        return indices;
+
+        return indicies;
     }
 }
