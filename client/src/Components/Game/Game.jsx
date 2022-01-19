@@ -124,21 +124,18 @@ export const Game = () => {
 
     const isEnemyKinginCheck = (squares) => {
         return new Promise((resolve, reject) => {
-            let enemyKingIndex = -1;
-            let check = false;
-            let otherPlayer = playerTurn === 1 ? 2 : 1;
+            var enemyKingIndex = -1;
+            var check = false;
+            var otherPlayer = playerTurn === 1 ? 2 : 1;
             var path = [];
             var attackingPiece = -1;
-
-            for (let i = 0; i < squares.length && enemyKingIndex < 0; ++i) {
+            for (var i = 0; i < squares.length && enemyKingIndex < 0; ++i) {
                 if (squares[i] !== null && squares[i].name === "King" && squares[i].player === otherPlayer) {
                     enemyKingIndex = i;
                 }
             }
-
             var found = false;
-
-            for (let j = 0; j < squares.length && !found; ++j) {
+            for (var j = 0; j < squares.length && !found; ++j) {
                 if (squares[j] !== null && squares[j].player === playerTurn) {
                     const validMove = squares[j].isMoveValid(j, enemyKingIndex, true);
                     path = squares[j].getPathIndicies(j, enemyKingIndex);
@@ -151,6 +148,7 @@ export const Game = () => {
                     }
                 }
             }
+
             if (found) {
                 check = true;
                 var checkmate = isKingCheckmated(squares, attackingPiece, enemyKingIndex, path);
@@ -158,7 +156,7 @@ export const Game = () => {
             else {
                 check = false;
             }
-            let enemyCheck = { check, enemyKingIndex, checkmate };
+            var enemyCheck = { check, enemyKingIndex, checkmate }
             resolve(enemyCheck);
         })
     }
@@ -237,6 +235,7 @@ export const Game = () => {
                 return true;
             }
         }
+
         if (index === 2 || index === 58) {
             if (squares[index - 2].name === "Rook" && !squares[index - 2].moved()) {
                 return true;
@@ -249,51 +248,54 @@ export const Game = () => {
             if (index === 62) {
                 if (checkRook(squares, index)) {
                     if (squares[61] === null && squares[62] === null) {
-                        socket.emit("castle", {
-                            gameId,
+                        socket.emit('castle', {
+                            gameId: gameId,
                             start: selectedIndex,
                             end: index,
                             space1: 61,
-                            space2: 63
-                        })
+                            space2: 63,
+                        });
+                    }
+
+                    else {
+                        console.log("invalid move");
                     }
                 }
-                else {
-                    return false
-                }
             }
+
             if (index === 6) {
                 if (checkRook(squares, index)) {
                     if (squares[5] === null && squares[6] === null) {
-                        socket.emit("castle", {
-                            gameId,
+                        socket.emit('castle', {
+                            gameId: gameId,
                             start: selectedIndex,
                             end: index,
                             space1: 5,
-                            space2: 7
-                        })
+                            space2: 7,
+                        });
                     }
                     else {
-                        return false
+                        return false;
                     }
                 }
             }
             if (index === 2) {
                 if (checkRook(squares, index)) {
                     if (squares[1] === null && squares[2] === null && squares[3] === null) {
-                        socket.emit("castle", {
-                            gameId,
+                        socket.emit('castle', {
+                            gameId: gameId,
                             start: selectedIndex,
                             end: index,
                             space1: 3,
-                            space2: 0
-                        })
+                            space2: 0,
+                        });
+                    }
+                    else {
+                        return false;
                     }
                 }
-                else {
-                    return false
-                }
             }
+
             if (index === 58) {
                 if (checkRook(squares, index)) {
                     if (squares[57] === null && squares[58] === null && squares[59] === null) {
@@ -310,50 +312,53 @@ export const Game = () => {
                     }
                 }
             }
+
             return squares;
         }
     }
 
     const checkValidPath = (squares, path) => {
-        let valid = true;
-        for (let i = 0; i < path.length && valid; ++i) {
+        var valid = true;
+
+        for (var i = 0; i < path.length && valid; ++i) {
             if (squares[path[i]] !== null) {
                 valid = false;
             }
         }
+
         return valid;
     }
 
     const handleClick = (index) => {
-        let player = usernames[0] === username ? 1 : 2;
+        var player = usernames[0] === username ? 1 : 2;
         if (player === playerTurn) {
-            let tempsquares = squares.slice();
+            var tempsquares = squares.slice();
+
             if (selectedIndex < 0) {
-                if (tempsquares[index] && tempsquares[index].player === playerTurn) {
-                    tempsquares[index].style = { ...tempsquares[index].style, backgroundColor: "#575E6B" }
+                if (tempsquares[index] && (tempsquares[index].player === playerTurn)) {
+                    tempsquares[index].style = { ...tempsquares[index].style, backgroundColor: "#575E6B" };
                     setSquares(tempsquares);
                     setSelectedIndex(index);
                 }
-                else if (tempsquares[index] && tempsquares[index].player !== playerTurn) {
-                    console.log("Not Your Piece");
-                }
                 else {
-                    console.log("There is no Piece");
+                    console.log("That is not your piece");
                 }
             }
+
             else {
-                tempsquares[selectedIndex].style = { ...squares[selectedIndex].style, backgroundColor: null }
+                tempsquares[selectedIndex].style = { ...squares[selectedIndex].style, backgroundColor: null };
                 if (tempsquares[selectedIndex] !== null && tempsquares[selectedIndex].name === "King" && !tempsquares[selectedIndex].moved() && (index === 2 || index === 6 || index === 58 || index === 62)) {
                     checkCastle(tempsquares, index);
                 }
+
                 else if (checkEnPassant(tempsquares, index)) {
                     socket.emit("enPassant", {
-                        gameId,
-                        endIndex: index
-                    })
+                        gameId: gameId,
+                        endIndex: index,
+                    });
                 }
+
                 else if (tempsquares[index] !== null && tempsquares[index].player === playerTurn) {
-                    console.log("You move your own coins");
                     setSquares(tempsquares);
                     setSelectedIndex(-1);
                 }
@@ -381,44 +386,48 @@ export const Game = () => {
                                 tempsquares[index] = new Queen(2);
                                 setPawnToQueenIndex(index);
                             }
-                            isMyKinginCheck(tempsquares).then((data) => {
-                                if (data.check) {
-                                    console.log("move your king ");
-                                    setSelectedIndex(-1);
-                                }
-                                else {
-                                    isEnemyKinginCheck(tempsquares).then((enemyCheckData) => {
-                                        if (enemyCheckData.check) {
-                                            socket.emit("move", {
-                                                initialIndex: selectedIndex,
-                                                endIndex: index,
-                                                gameId: gameId,
-                                                enemyKingIndex: enemyCheckData.enemyKingIndex,
-                                                checkmate: enemyCheckData.checkmate,
-                                                evolveIndex: pawnToQueenIndex
+                            isMyKinginCheck(tempsquares)
+                                .then((data) => {
+                                    if (data.check) {
+                                        setSelectedIndex(-1);
+                                    }
+                                    else {
+                                        isEnemyKinginCheck(tempsquares)
+                                            .then((enemyCheckData) => {
+                                                if (enemyCheckData.check) {
+                                                    console.log(index);
+                                                    socket.emit('move', {
+                                                        initialIndex: selectedIndex,
+                                                        endIndex: index,
+                                                        gameId: gameId,
+                                                        enemyKingIndex: enemyCheckData.enemyKingIndex,
+                                                        checkmate: enemyCheckData.checkmate,
+                                                        evolveIndex: pawnToQueenIndex,
+                                                    })
+                                                }
+
+                                                else {
+                                                    socket.emit('move', {
+                                                        initialIndex: selectedIndex,
+                                                        endIndex: index,
+                                                        gameId: gameId,
+                                                    })
+                                                }
+
                                             })
-                                        }
-                                        else {
-                                            socket.emit("move", {
-                                                initialIndex: selectedIndex,
-                                                endIndex: index,
-                                                gameId: gameId,
-                                            })
-                                        }
-                                    })
-                                }
-                            }).catch((err) => {
-                                console.log(err);
-                            })
+                                    }
+                                })
+                                .catch((err) => {
+                                    console.log(err);
+                                })
                         }
                         else {
-                            console.log("invalid path", pathIndicies);
                             setSquares(tempsquares);
                             setSelectedIndex(-1);
                         }
                     }
                     else {
-                        console.log("invalid move");
+
                         setSquares(tempsquares);
                         setSelectedIndex(-1);
                     }
