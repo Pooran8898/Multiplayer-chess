@@ -165,19 +165,18 @@ export const Game = () => {
 
     const isMyKinginCheck = (squares) => {
         return new Promise((resolve, reject) => {
-            let kingIndex = -1;
-            let check = false;
-            let otherPlayer = playerTurn === 1 ? 2 : 1;
-
-            for (let i = 0; i < squares.length && kingIndex < 0; ++i) {
+            var kingIndex = -1;
+            var check = false;
+            var otherPlayer = playerTurn === 1 ? 2 : 1;
+            for (var i = 0; i < squares.length && kingIndex < 0; ++i) {
                 if (squares[i] !== null && squares[i].name === "King" && squares[i].player === playerTurn) {
-                    kingIndex = i
+                    kingIndex = i;
                 }
             }
 
-            let found = false;
+            var found = false;
 
-            for (let j = 0; j < squares.length && !found; ++j) {
+            for (var j = 0; j < squares.length && !found; ++j) {
                 if (squares[j] !== null && squares[j].player === otherPlayer) {
                     const validMove = squares[j].isMoveValid(j, kingIndex, true);
                     const path = squares[j].getPathIndicies(j, kingIndex);
@@ -189,6 +188,7 @@ export const Game = () => {
                     }
                 }
             }
+
             if (found) {
                 squares[kingIndex].style = { ...squares[kingIndex].style, backgroundColor: '#FF6060' };
                 check = true;
@@ -207,20 +207,18 @@ export const Game = () => {
             1: [24, 25, 26, 27, 28, 29, 30, 31],
             2: [32, 33, 34, 35, 36, 37, 38, 39]
         }
-
         const otherPlayer = playerTurn === 1 ? 2 : 1;
 
         if (squares[selectedIndex].name === "Pawn" && enPassantPositions[1].indexOf(selectedIndex) >= 0 && playerTurn === 1) {
-
-            if (squares[selectedIndex - 1] !== null && squares[selectedIndex - 1].name === "Pawn" && squares[selectedIndex - 1].player === otherPlayer && squares[selectedIndex - 1].doublejump &&
-                index === selectedIndex - 9) {
-                return true
+            console.log(squares[selectedIndex - 9] === index);
+            if (squares[selectedIndex - 1] !== null && squares[selectedIndex - 1].name === "Pawn" && squares[selectedIndex - 1].player === otherPlayer && squares[selectedIndex - 1].doubleJump && index === selectedIndex - 9) {
+                return true;
             }
-            if (squares[selectedIndex + 1] !== null && squares[selectedIndex + 1].name === "Pawn" && squares[selectedIndex + 1].player === otherPlayer && squares[selectedIndex + 1].doublejump &&
-                index === selectedIndex - 7) {
-                return true
+            if (squares[selectedIndex + 1] !== null && squares[selectedIndex + 1].name === "Pawn" && squares[selectedIndex + 1].player === otherPlayer && squares[selectedIndex + 1].doubleJump && index === selectedIndex - 7) {
+                return true;
             }
         }
+
         if (squares[selectedIndex].name === "Pawn" && enPassantPositions[2].indexOf(selectedIndex) >= 0 && playerTurn === 2) {
             if (squares[selectedIndex - 1] !== null && squares[selectedIndex - 1].name === "Pawn" && squares[selectedIndex - 1].player === otherPlayer && squares[selectedIndex - 1].doubleJump && index === selectedIndex + 7) {
                 return true;
@@ -229,6 +227,7 @@ export const Game = () => {
                 return true;
             }
         }
+
         return false;
     }
 
