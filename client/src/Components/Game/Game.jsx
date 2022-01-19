@@ -4,6 +4,7 @@ import chessSound from "./chess_move.mp3";
 import { initializeChessBoard } from "../../Helpers/InitializeChessBoard";
 import { Board } from "../Board/Board";
 import { Datacontext } from "../../Context/Datacontext";
+import { Queen } from "../../Pieces/Queen";
 
 
 
@@ -27,6 +28,45 @@ export const Game = () => {
             setUsernames(users);
         })
     }, [])
+
+    const isMyKinginCheck = (squares) => {
+        return new Promise((resolve, reject) => {
+            let kingIndex = -1;
+            let check = false;
+            let otherPlayer = playerTurn === 1 ? 2 : 1;
+
+            for (let i = 0; i < squares.length && kingIndex > 0; ++i) {
+                if (squares[i] !== null && squares[i].name === "King" && squares[i].player === playerTurn) {
+                    kingIndex = i
+                }
+            }
+
+            let found = false;
+
+            for (let j = 0; j < squares.length && !found; ++j) {
+                if (squares[j] !== null && squares[j].player === otherPlayer) {
+                    const validMove = squares[j].isMoveValid(j, kingIndex, true);
+                    const path = squares[j].getPathIndicies(j, kingIndex);
+                    if (validMove) {
+                        const validPath = checkValidPath(squares, path);
+                        if (validPath) {
+                            found = true;
+                        }
+                    }
+                }
+            }
+            if (found) {
+                squares[kingIndex].style = { ...squares[kingIndex].style, backgroundColor: '#FF6060' };
+                check = true;
+            }
+            else {
+                squares[kingIndex].style = { ...squares[kingIndex].style, backgroundColor: null };
+                check = false;
+            }
+            const obj = { check, kingIndex };
+            resolve(obj);
+        })
+    }
 
     const checkEnPassant = (squares, index) => {
         const enPassantPositions = {
@@ -141,6 +181,16 @@ export const Game = () => {
         }
     }
 
+    const checkValidPath = (squares, path) => {
+        let valid = true;
+        for (let i = 0; i < path.length && valid; ++i) {
+            if (squares[path[i]] !== null) {
+                valid = false;
+            }
+        }
+        return valid;
+    }
+
     const handleClick = (index) => {
         let player = usernames[0] === username ? 1 : 2;
         console.log(index);
@@ -165,7 +215,51 @@ export const Game = () => {
                     checkCastle(tempsquares, index);
                 }
                 else if (checkEnPassant(tempsquares, index)) {
-
+                    socket.emit("enPassant", {
+                        gameId,
+                        endIndex: index
+                    })
+                }
+                else if (tempsquares[index] !== null && tempsquares[index].player === playerTurn) {
+                    console.log("You move your own coins");
+                    setSquares(tempsquares);
+                    setSelectedIndex(-1);
+                }
+                else {
+                    const lastRows = {
+                        1: [0, 1, 2, 3, 4, 5, 6, 7],
+                        2: [56, 57, 58, 59, 60, 61, 62, 63]
+                    };
+                    const isSquareOccupied = tempsquares[index] === null ? false : true;
+                    const validMove = tempsquares[selectedIndex].isMoveValid(selectedIndex, index, isSquareOccupied);
+                    const pathIndicies = tempsquares[selectedIndex].getPathIndicies(selectedIndex, index);
+                    if (validMove) {
+                        const validPath = checkValidPath(tempsquares, pathIndicies);
+                        if (validPath) {
+                            tempsquares[index] = tempsquares[selectedIndex];
+                            tempsquares[index].handleMoved();
+                            tempsquares[selectedIndex] = null;
+                            if (tempsquares[index].name === "Pawn" && lastRows[1].indexOf(index) >= 0) {
+                                tempsquares[index] = null;
+                                tempsquares[index] = new Queen(1);
+                                setPawnToQueenIndex(index);
+                            }
+                            if (tempsquares[index].name === "Pawn" && lastRows[2].indexOf(index) >= 0) {
+                                tempsquares[index] = null;
+                                tempsquares[index] = new Queen(2);
+                                setPawnToQueenIndex(index);
+                            }
+                            isMyKinginCheck(tempsquares).then((data) => {
+                                if (data.check) {
+                                    console.log("move your king ");
+                                    setSelectedIndex(-1);
+                                }
+                                else {
+                                    
+                                }
+                            })
+                        }
+                    }
                 }
             }
         }
