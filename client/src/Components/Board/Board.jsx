@@ -11,9 +11,9 @@ export const Board = ({ squares, onClick, player }) => {
 
     function createBoard() {
         if (player === 1) {
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 8; ++i) {
                 let row = [];
-                for (let j = 0; j < 8; j++) {
+                for (let j = 0; j < 8; ++j) {
                     if (i % 2 === 0) {
                         if (j % 2 === 0) {
                             row.push(renderSquare(i * 8 + j, "light"));
@@ -35,9 +35,9 @@ export const Board = ({ squares, onClick, player }) => {
             }
         }
         else {
-            for (let i = 7; i >= 0; i--) {
+            for (let i = 7; i >= 0; --i) {
                 let row = [];
-                for (let j = 7; j >= 0; j--) {
+                for (let j = 7; j >= 0; --j) {
                     if (i % 2 === 0) {
                         if (j % 2 === 0) {
                             row.push(renderSquare(i * 8 + j, "light"));
