@@ -42,7 +42,7 @@ export class Pawn extends Piece {
             }
         }
     }
-    getPathIndices(initialposition, endingposition) {
+    getPathIndicies(initialposition, endingposition) {
         let indices = [];
         if (endingposition - initialposition === 16) {
             indices.push(initialposition + 8);
