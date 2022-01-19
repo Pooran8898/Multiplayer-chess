@@ -6,6 +6,8 @@ import { Board } from "../Board/Board";
 import { Datacontext } from "../../Context/Datacontext";
 import { Queen } from "../../Pieces/Queen";
 import { Rook } from "../../Pieces/Rook";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Button } from "@material-ui/core";
+import { Chat } from "../Chat/Chat";
 
 
 
@@ -575,7 +577,79 @@ export const Game = () => {
 
     return (
         <>
-            <Board onClick={(index) => handleClick(index)} squares={squares} player={usernames[0] === username ? 1 : 2} />
+            <div className="Game">
+                {start ?
+                    <>
+                        <div className="game-container">
+                            <div>
+                                <Dialog
+                                    open={open}
+                                    onClose={handleClose}
+                                    aria-labelledby="alert-dialog-title"
+                                    aria-describedby="alert-dialog-description"
+                                >
+                                    <DialogTitle id="alert-dialog-title">{`${playerTurn === 1 ? usernames[1] : usernames[0]} wins!`}</DialogTitle>
+                                    <DialogContent>
+                                        <DialogContentText id="alert-dialog-description">
+
+                                        </DialogContentText>
+                                    </DialogContent>
+                                    <DialogActions>
+                                        <Button onClick={rematch} color="primary" disabled={clickRematch}>
+                                            {clickRematch ? "Waiting for other player" : "Rematch"}
+                                        </Button>
+                                        <Button onClick={handleClose} color="primary" autoFocus>
+                                            Cancel
+                                        </Button>
+                                    </DialogActions>
+                                </Dialog>
+                                <h1>{usernames[0] === username ? usernames[1] : usernames[0]}</h1>
+                                <Board
+                                    squares={squares}
+                                    onClick={(index) => handleClick(index)}
+                                    player={usernames[0] === username ? 1 : 2}
+                                />
+                                <h1>{usernames[0] === username ? usernames[0] : usernames[1]}</h1>
+                                <Button onClick={resign} variant="contained" color="primary">
+                                    Resign
+                                </Button>
+                                <div>
+                                    <Chat />
+                                </div>
+                            </div>
+                        </div>
+                    </>
+                    :
+                    <>
+                        <div className="game-lobby-container">
+                            <h1>Welcome to Online Chess!</h1>
+                            <p>
+                                Hey {username}! This app was made so that you can play chess with your friends at the comfort of your own home!
+                            </p>
+                            <p>
+                                Send this link with a friend to start your chess game
+                            </p>
+
+                            <div>
+                                <TextField
+                                    id="outlined-read-only-input"
+                                    label="Share Link"
+                                    defaultValue={window.location}
+                                    InputProps={{
+                                        readOnly: true,
+                                    }}
+                                    style={{ width: '30vw', marginTop: '2%', marginBottom: '1%' }}
+                                    variant="outlined"
+                                />
+                            </div>
+
+                            <div>
+                                <p>Waiting for game to start ...</p>
+                            </div>
+                        </div>
+                    </>
+                }
+            </div>
         </>
     )
 }
