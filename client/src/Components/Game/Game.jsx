@@ -21,13 +21,77 @@ export const Game = () => {
     const [pawnToQueenIndex, setPawnToQueenIndex] = useState(-1);
     const { username, socket, gameId } = useContext(Datacontext)
 
-    useEffect(() => {
-        socket.emit("shouldGameStart", gameId);
-        socket.on("start game", (users) => {
-            setStart(true);
-            setUsernames(users);
-        })
-    }, [])
+
+    const isKingCheckmated = (tempsquares, attackingPiecePos, enemyKingPos, attackingPath) => {
+        const otherPlayer = playerTurn === 1 ? 2 : 1;
+        var found = false;
+        var allPaths = [...attackingPath, attackingPiecePos];
+        for (var j = 0; j < allPaths.length; ++j) {
+            for (var k = 0; k < tempsquares.length && !found; ++k) {
+                if (tempsquares[k] !== null && tempsquares[k].player === otherPlayer && tempsquares[k].name !== "King") {
+                    console.log(tempsquares[k], k, allPaths[j]);
+                    const validMove = tempsquares[k].isMoveValid(k, allPaths[j], true);
+                    if (validMove) {
+                        const path = tempsquares[k].getPathIndicies(k, allPaths[j]);
+                        const validPath = checkValidPath(tempsquares, path);
+                        if (validPath) {
+                            found = true;
+                        }
+                    }
+                }
+            }
+        }
+        const kingPossibleMoves = [
+            enemyKingPos + 1,
+            enemyKingPos - 1,
+            enemyKingPos + 8,
+            enemyKingPos - 8,
+            enemyKingPos + 9,
+            enemyKingPos - 9,
+            enemyKingPos + 7,
+            enemyKingPos - 7,
+        ];
+
+        for (var a = 0; a < kingPossibleMoves.length && !found; ++a) {
+            var temp;
+            if (tempsquares[a] !== null) {
+                if (tempsquares[a].player === otherPlayer) {
+                    temp = tempsquares[a];
+                    tempsquares[a] = tempsquares[enemyKingPos];
+                    tempsquares[enemyKingPos] = null;
+
+                    isEnemyKinginCheck(tempsquares)
+                        .then((data) => {
+                            if (data.check) {
+                                tempsquares[enemyKingPos] = tempsquares[a];
+                                tempsquares[a] = temp;
+                            }
+                            else {
+                                found = true;
+                            }
+                        })
+                }
+            }
+            else {
+                temp = tempsquares[a];
+                tempsquares[a] = tempsquares[enemyKingPos];
+                tempsquares[enemyKingPos] = null;
+
+                isEnemyKinginCheck(tempsquares)
+                    .then((data) => {
+                        if (data.check) {
+                            tempsquares[enemyKingPos] = tempsquares[a];
+                            tempsquares[a] = temp;
+                        }
+                        else {
+                            found = true;
+                        }
+                    });
+            }
+        }
+        return found;
+
+    }
 
     const isEnemyKinginCheck = (squares) => {
         return new Promise((resolve, reject) => {
@@ -58,9 +122,10 @@ export const Game = () => {
                     }
                 }
             }
+            let checkmate = false;
             if (found) {
                 check = true;
-
+                checkmate = isKingCheckmated(squares, attackingPiece, enemyKingIndex, path);
             }
             else {
                 check = false;
@@ -234,7 +299,6 @@ export const Game = () => {
 
     const handleClick = (index) => {
         let player = usernames[0] === username ? 1 : 2;
-        console.log(index);
         if (player === playerTurn) {
             let tempsquares = squares.slice();
             if (selectedIndex < 0) {
@@ -296,15 +360,57 @@ export const Game = () => {
                                     setSelectedIndex(-1);
                                 }
                                 else {
-
+                                    isEnemyKinginCheck(tempsquares).then((enemyCheckData) => {
+                                        if (enemyCheckData.check) {
+                                            socket.emit("move", {
+                                                initialIndex: selectedIndex,
+                                                endIndex: index,
+                                                gameId: gameId,
+                                                enemyKingIndex: enemyCheckData.enemyKingIndex,
+                                                checkmate: enemyCheckData.checkmate,
+                                                evolveIndex: pawnToQueenIndex
+                                            })
+                                        }
+                                        else {
+                                            socket.emit("move", {
+                                                initialIndex: selectedIndex,
+                                                endIndex: index,
+                                                gameId: gameId,
+                                            })
+                                        }
+                                    })
                                 }
+                            }).catch((err) => {
+                                console.log(err);
                             })
                         }
+                        else {
+                            console.log("invalid path", pathIndicies);
+                            setSquares(tempsquares);
+                            setSelectedIndex(-1);
+                        }
+                    }
+                    else {
+                        console.log("invalid move");
+                        setSquares(tempsquares);
+                        setSelectedIndex(-1);
                     }
                 }
             }
         }
+        else {
+            console.log("not your turn");
+        }
     }
+
+    useEffect(() => {
+        socket.emit("shouldGameStart", gameId);
+        socket.on("start game", (users) => {
+            setStart(true);
+            setUsernames(users);
+        })
+    }, [])
+
     return (
         <>
             <Board onClick={(index) => handleClick(index)} squares={squares} player={usernames[0] === username ? 1 : 2} />
