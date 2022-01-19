@@ -34,8 +34,28 @@ export const Game = () => {
             2: [32, 33, 34, 35, 36, 37, 38, 39]
         }
 
-        const otherPlayer = playerTurn === 1 ? 2: 1;
-        
+        const otherPlayer = playerTurn === 1 ? 2 : 1;
+
+        if (squares[selectedIndex].name === "Pawn" && enPassantPositions[1].indexOf(selectedIndex) >= 0 && playerTurn === 1) {
+
+            if (squares[selectedIndex - 1] !== null && squares[selectedIndex - 1].name === "Pawn" && squares[selectedIndex - 1].player === otherPlayer && squares[selectedIndex - 1].doublejump &&
+                index === selectedIndex - 9) {
+                return true
+            }
+            if (squares[selectedIndex + 1] !== null && squares[selectedIndex + 1].name === "Pawn" && squares[selectedIndex + 1].player === otherPlayer && squares[selectedIndex + 1].doublejump &&
+                index === selectedIndex - 7) {
+                return true
+            }
+        }
+        if (squares[selectedIndex].name === "Pawn" && enPassantPositions[2].indexOf(selectedIndex) >= 0 && playerTurn === 2) {
+            if (squares[selectedIndex - 1] !== null && squares[selectedIndex - 1].name === "Pawn" && squares[selectedIndex - 1].player === otherPlayer && squares[selectedIndex - 1].doubleJump && index === selectedIndex + 7) {
+                return true;
+            }
+            if (squares[selectedIndex - 1] !== null && squares[selectedIndex - 1].name === "Pawn" && squares[selectedIndex - 1].player === otherPlayer && squares[selectedIndex - 1].doubleJump && index === selectedIndex + 9) {
+                return true;
+            }
+        }
+        return false;
     }
 
     const checkRook = (squares, index) => {
