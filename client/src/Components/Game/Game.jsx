@@ -16,7 +16,6 @@ export const Game = () => {
     const [open, setOpen] = useState(false);
     const [clickRematch, setClickRematch] = useState(false);
     const [pawnToQueenIndex, setPawnToQueenIndex] = useState(-1);
-    console.log(squares);
     return (
         <>
             <h1>Game new</h1>
