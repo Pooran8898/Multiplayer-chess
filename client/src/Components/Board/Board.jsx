@@ -1,12 +1,13 @@
 import React from "react";
 import "./Board.css";
 import { Square } from "../Square/Square";
+import { v4 as uuid } from "uuid";
 
 
 export const Board = ({ squares, onClick, player }) => {
     let board = [];
     function renderSquare(i, colour) {
-        return <Square onClick={() => onClick(i)} style={squares[i] ? squares[i].style : null} colour={colour} />
+        return <Square key={uuid()} onClick={() => onClick(i)} style={squares[i] ? squares[i].style : null} colour={colour} />
     }
 
     function createBoard() {
@@ -31,7 +32,7 @@ export const Board = ({ squares, onClick, player }) => {
                         }
                     }
                 }
-                board.push(<div >{row}</div>)
+                board.push(<div key={uuid()}>{row}</div>)
             }
         }
         else {
@@ -55,7 +56,7 @@ export const Board = ({ squares, onClick, player }) => {
                         }
                     }
                 }
-                board.push(<div>{row}</div>)
+                board.push(<div key={uuid()}>{row}</div>)
             }
         }
     }
@@ -63,7 +64,7 @@ export const Board = ({ squares, onClick, player }) => {
     return (
         <>
             <div className="board-container">
-                {board}
+             {board}
             </div>
         </>
     )
