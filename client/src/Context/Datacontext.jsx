@@ -29,6 +29,7 @@ export const DatacontextProvider = ({ children }) => {
         gameId,
         setgameId,
         generateGameId,
+        socket
     }
     return (
         <>
