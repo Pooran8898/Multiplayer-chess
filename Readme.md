@@ -7,6 +7,7 @@
 * [express]
 * [socket.io]
 * [material-ui]
+* [react-router-dom]
 * [react-scroll-to-bottom]
 * [socket.io-client]
 * [use-sound]
